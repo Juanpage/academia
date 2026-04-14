@@ -1,0 +1,72 @@
+services:
+  # ─── PostgreSQL ────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: academia_postgres
+    restart: unless-stopped
+    command: postgres -c password_encryption=md5
+    environment:
+      POSTGRES_DB:               academia_db
+      POSTGRES_USER:             academia_user
+      POSTGRES_PASSWORD:         LocalPass123
+      POSTGRES_HOST_AUTH_METHOD: md5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U academia_user -d academia_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ─── Redis ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: academia_redis
+    restart: unless-stopped
+    command: redis-server --requirepass redislocal
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redislocal", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ─── Moodle ────────────────────────────────────────────────────────────────
+  moodle:
+    build:
+      context: ./moodle
+      dockerfile: Dockerfile
+    container_name: academia_moodle
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      MOODLE_DATABASE_HOST:     postgres
+      MOODLE_DATABASE_NAME:     moodle_db
+      MOODLE_DATABASE_USER:     academia_user
+      MOODLE_DATABASE_PASSWORD: LocalPass123
+      MOODLE_ADMIN_USER:        admin
+      MOODLE_ADMIN_PASSWORD:    Moodle1234!
+      MOODLE_ADMIN_EMAIL:       admin@academia.local
+      MOODLE_SITE_NAME:         "Academia Militar Digital"
+      # CRÍTICO: debe coincidir exactamente con cómo accedes desde el host
+      MOODLE_WWWROOT:           http://moodle.local:8080
+      # Token fijo para la API del backend
+      MOODLE_WS_TOKEN:          30c111a89c22696e96d0e5c810861304
+      MOODLE_WS_USER:           wsuser
+      MOODLE_WS_PASSWORD:       Wsuser1234!
+    volumes:
+      - moodle_data:/var/www/moodle
+      - moodle_datadir:/var/moodledata
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  moodle_data:
+  moodle_datadir:

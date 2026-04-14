@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter:    'Inter', sans-serif;
+  --font-orbitron: 'Orbitron', monospace;
+}
+
+body {
+  background: #0a0f0a;
+  color: #e8f5e4;
+  font-family: var(--font-inter);
+}
+
+/* Scrollbar militar */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #111a0f; }
+::-webkit-scrollbar-thumb { background: #3d7035; border-radius: 3px; }
+
+@layer components {
+  .btn-primary {
+    @apply bg-military-500 hover:bg-military-400 text-white
+           font-medium px-4 py-2 rounded transition-colors
+           border border-military-400;
+  }
+  .btn-gold {
+    @apply bg-gold-500 hover:bg-gold-400 text-military-900
+           font-semibold px-4 py-2 rounded transition-colors;
+  }
+  .card {
+    @apply bg-military-800 border border-military-700
+           rounded-lg p-5;
+  }
+  .input-field {
+    @apply bg-military-700 border border-military-600
+           rounded px-3 py-2 text-military-100
+           focus:outline-none focus:border-military-400
+           placeholder-military-400 w-full;
+  }
+  .badge-active    { @apply bg-military-500 text-white text-xs px-2 py-0.5 rounded-full; }
+  .badge-inactive  { @apply bg-gray-700 text-gray-300 text-xs px-2 py-0.5 rounded-full; }
+  .badge-overdue   { @apply bg-red-900 text-red-300 text-xs px-2 py-0.5 rounded-full; }
+}
