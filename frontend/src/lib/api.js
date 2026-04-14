@@ -64,13 +64,21 @@ export const evaluationsApi = {
 
   // ── Psicológico ─────────────────────────────────────────────
   getPsychological:   (id)   => api.get('/psychological-evaluations/aspirant/' + id),
-  addPsychological:   (data) => api.post('/evaluations/psychological', data),
+  addPsychological:   (data) => api.post('/psychological-evaluations', data),
   deletePsychological:(id)   => api.delete('/psychological-evaluations/' + id),
+  // Alias legacy (pantallas antiguas)
+  getPsych:           (id)   => api.get('/psychological-evaluations/aspirant/' + id),
+  addPsych:           (data) => api.post('/psychological-evaluations', data),
+  deletePsych:        (id)   => api.delete('/psychological-evaluations/' + id),
 
   // ── Médico ──────────────────────────────────────────────────
   getMedical:         (id)   => api.get('/medical-evaluations/aspirant/' + id),
-  addMedical:         (data) => api.post('/evaluations/medical', data),
+  addMedical:         (data) => api.post('/medical-evaluations', data),
   deleteMedical:      (id)   => api.delete('/medical-evaluations/' + id),
+  // Alias legacy (pantallas antiguas)
+  getMedicalEval:     (id)   => api.get('/medical-evaluations/aspirant/' + id),
+  addMedicalEval:     (data) => api.post('/medical-evaluations', data),
+  deleteMedicalEval:  (id)   => api.delete('/medical-evaluations/' + id),
 
   // ── Académico ───────────────────────────────────────────────
   getAcademic:        (id)   => api.get('/academic-evaluations/aspirant/' + id),
