@@ -247,7 +247,7 @@ export default function ReportsPage() {
                   </thead>
                   <tbody>
                     {(evaluations[evalTab] || []).map((ev, i) => (
-                      <tr key={ev.id} className={'border-b border-military-700 hover:bg-military-700/50 ' + (i%2===0?'':'bg-military-800/50')}>
+                      <tr key={(ev.aspirant_id || 'asp') + '-' + (ev.id || 'sin-eval')} className={'border-b border-military-700 hover:bg-military-700/50 ' + (i%2===0?'':'bg-military-800/50')}>
                         <td className="px-3 py-2 text-military-200">{ev.aspirante}</td>
                         <td className="px-3 py-2 text-military-400 text-xs">{ev.cedula}</td>
                         {evalTab === 'academic' && <>
@@ -274,7 +274,9 @@ export default function ReportsPage() {
                           <td className="px-3 py-2 text-center text-military-300">{ev.imc ? parseFloat(ev.imc).toFixed(2) : '—'}</td>
                           <td className="px-3 py-2 text-military-400 text-xs">{ev.institucion_emisora || '—'}</td>
                         </>}
-                        <td className="px-3 py-2 text-military-500 text-xs">{new Date(ev.created_at).toLocaleDateString('es-EC')}</td>
+                        <td className="px-3 py-2 text-military-500 text-xs">
+                          {ev.created_at ? new Date(ev.created_at).toLocaleDateString('es-EC') : '—'}
+                        </td>
                       </tr>
                     ))}
                     {(evaluations[evalTab] || []).length === 0 && (
