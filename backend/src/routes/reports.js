@@ -42,28 +42,84 @@ router.get('/evaluations', async (req, res) => {
   try {
     const [academic, physical, psico, medical] = await Promise.all([
       pool.query(`
-        SELECT ae.*, a.first_name || ' ' || a.last_name AS aspirante, a.cedula
-        FROM academic_evaluations ae
-        JOIN aspirants a ON a.id = ae.aspirant_id
-        ORDER BY ae.created_at DESC
+        SELECT
+          t.*,
+          a.id AS aspirant_id,
+          a.first_name || ' ' || a.last_name AS aspirante,
+          a.cedula,
+          COALESCE(t.created_at, a.created_at) AS created_at
+        FROM aspirants a
+        LEFT JOIN (
+          SELECT *
+          FROM (
+            SELECT
+              ae.*,
+              ROW_NUMBER() OVER (PARTITION BY ae.aspirant_id ORDER BY ae.created_at DESC) AS rn
+            FROM academic_evaluations ae
+          ) x
+          WHERE x.rn = 1
+        ) t ON t.aspirant_id = a.id
+        ORDER BY COALESCE(t.created_at, a.created_at) DESC, a.last_name ASC
       `),
       pool.query(`
-        SELECT pe.*, a.first_name || ' ' || a.last_name AS aspirante, a.cedula
-        FROM physical_evaluations pe
-        JOIN aspirants a ON a.id = pe.aspirant_id
-        ORDER BY pe.created_at DESC
+        SELECT
+          t.*,
+          a.id AS aspirant_id,
+          a.first_name || ' ' || a.last_name AS aspirante,
+          a.cedula,
+          COALESCE(t.created_at, a.created_at) AS created_at
+        FROM aspirants a
+        LEFT JOIN (
+          SELECT *
+          FROM (
+            SELECT
+              pe.*,
+              ROW_NUMBER() OVER (PARTITION BY pe.aspirant_id ORDER BY pe.created_at DESC) AS rn
+            FROM physical_evaluations pe
+          ) x
+          WHERE x.rn = 1
+        ) t ON t.aspirant_id = a.id
+        ORDER BY COALESCE(t.created_at, a.created_at) DESC, a.last_name ASC
       `),
       pool.query(`
-        SELECT pse.*, a.first_name || ' ' || a.last_name AS aspirante, a.cedula
-        FROM psychological_evaluations pse
-        JOIN aspirants a ON a.id = pse.aspirant_id
-        ORDER BY pse.created_at DESC
+        SELECT
+          t.*,
+          a.id AS aspirant_id,
+          a.first_name || ' ' || a.last_name AS aspirante,
+          a.cedula,
+          COALESCE(t.created_at, a.created_at) AS created_at
+        FROM aspirants a
+        LEFT JOIN (
+          SELECT *
+          FROM (
+            SELECT
+              pse.*,
+              ROW_NUMBER() OVER (PARTITION BY pse.aspirant_id ORDER BY pse.created_at DESC) AS rn
+            FROM psychological_evaluations pse
+          ) x
+          WHERE x.rn = 1
+        ) t ON t.aspirant_id = a.id
+        ORDER BY COALESCE(t.created_at, a.created_at) DESC, a.last_name ASC
       `),
       pool.query(`
-        SELECT me.*, a.first_name || ' ' || a.last_name AS aspirante, a.cedula
-        FROM medical_evaluations me
-        JOIN aspirants a ON a.id = me.aspirant_id
-        ORDER BY me.created_at DESC
+        SELECT
+          t.*,
+          a.id AS aspirant_id,
+          a.first_name || ' ' || a.last_name AS aspirante,
+          a.cedula,
+          COALESCE(t.created_at, a.created_at) AS created_at
+        FROM aspirants a
+        LEFT JOIN (
+          SELECT *
+          FROM (
+            SELECT
+              me.*,
+              ROW_NUMBER() OVER (PARTITION BY me.aspirant_id ORDER BY me.created_at DESC) AS rn
+            FROM medical_evaluations me
+          ) x
+          WHERE x.rn = 1
+        ) t ON t.aspirant_id = a.id
+        ORDER BY COALESCE(t.created_at, a.created_at) DESC, a.last_name ASC
       `),
     ]);
     res.json({
