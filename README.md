@@ -105,3 +105,11 @@ Ver `backend/.env` — los valores por defecto funcionan en local.
 | Médico         | 10%  |
 
 Calculado automáticamente por PostgreSQL como columna generada.
+
+## Diseño de sistema de asistencia geolocalizado
+
+Se agregó una propuesta integral con arquitectura, modelo de datos, API y base de código en:
+- `docs/attendance/README.md`
+- `docs/attendance/schema.sql`
+- `attendance-backend/src/...`
+- `infra/docker/docker-compose.attendance.yml`
